@@ -15,6 +15,13 @@ class InstaMasher < Sinatra::Base
 
   get '/' do
     redirect Instagram.authorize_url(:redirect_uri => CALLBACK_URL) unless session[:access_token]
+
+    Thread.new do |t|
+      options = {:object_id => 'video'}
+      Instagram.create_subscription('tag', "http://cathoderaytube.herokuapp.com/subscription/callback", aspect = 'media', options)
+      t.exit
+    end
+
     haml :tv
   end
 
@@ -46,12 +53,6 @@ class InstaMasher < Sinatra::Base
     #   # redis.setnx "#{m.id}", m.videos.standard_resolution.url if m.videos
     #   videos << {:id => m.id, :url => m.videos.standard_resolution.url} if m.videos
     # end
-
-    Thread.new do |t|
-      options = {:object_id => 'video'}
-      Instagram.create_subscription('tag', "http://cathoderaytube.herokuapp.com/subscription/callback", aspect = 'media', options)
-      t.exit
-    end
 
     # puts videos.to_json
     # videos.to_json
