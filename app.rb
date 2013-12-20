@@ -38,8 +38,8 @@ class InstaMasher < Sinatra::Base
     end
   end
 
-  get '/videos' do
-    content_type :json
+  get '/subscribe' do
+    # content_type :json
     # client = Instagram.client(:access_token => session[:access_token])
     # videos = []
     # client.tag_recent_media('video').each do |m|
@@ -53,8 +53,8 @@ class InstaMasher < Sinatra::Base
       t.exit
     end
 
-    puts videos.to_json
-    videos.to_json
+    # puts videos.to_json
+    # videos.to_json
   end
 
 end
