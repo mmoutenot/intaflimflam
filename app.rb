@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'instagram'
+
 class InstaMasher < Sinatra::Base
   require './helpers/render_partial'
   enable :sessions
@@ -27,18 +28,29 @@ class InstaMasher < Sinatra::Base
     redirect '/'
   end
 
+  get '/subscription/callback' do
+    if params['hub.challenge']
+      render :text => params['hub.challenge']
+    else
+      puts 'Callback!'
+      puts params
+      # PrivatePub.publish_to("/subscriptions/tag/#{params[:object_id]}", payload: params[:_json])
+    end
+  end
+
   get '/videos' do
     content_type :json
-    client = Instagram.client(:access_token => session[:access_token])
+    # client = Instagram.client(:access_token => session[:access_token])
+    # videos = []
+    # client.tag_recent_media('video').each do |m|
+    #   # redis.setnx "#{m.id}", m.videos.standard_resolution.url if m.videos
+    #   videos << {:id => m.id, :url => m.videos.standard_resolution.url} if m.videos
+    # end
 
-    videos = []
-    recent_media = client.tag_recent_media('jamielidell')
-    recent_media.each do |m|
-      videos << {
-        :id => m.id,
-        :url => m.videos.standard_resolution.url,
-        :playing => (index == recent_media.size()-1)
-      } if m.videos
+    Thread.new do |t|
+      options = {:object_id => 'video'}
+      Instagram.create_subscription('tag', "http://cathoderaytube.herokuapp.com/subscription/callback", aspect = 'media', options)
+      t.exit
     end
 
     puts videos.to_json
