@@ -6,7 +6,7 @@ class InstaMasher < Sinatra::Base
   enable :sessions
   configure(:development) { set :session_secret, "something" }
 
-  CALLBACK_URL = 'http://localhost:4567/oauth/callback'
+  CALLBACK_URL = 'http://cathoderaytube.herokuapp.com/oauth/callback'
 
   Instagram.configure do |config|
     config.client_id = 'a5cf5a8ec091425dbca8eb0ffda482c2'
